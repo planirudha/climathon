@@ -62,7 +62,7 @@ fig = go.Figure(
 # Update layout with Mapbox settings
 fig.update_layout(
     mapbox_style="open-street-map",
-    mapbox_zoom=6.6,
+    mapbox_zoom=11,
     mapbox_center={"lat": lat, "lon": lon},
     width=800,
     height=600,
