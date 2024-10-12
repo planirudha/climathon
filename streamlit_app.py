@@ -22,6 +22,8 @@ system while remaining competitive. Climate change effects, such as rising tempe
 and increased frequency of extreme weather events pose a significant risk to industries and businesses. 
 Preparation and resilience planning are key to mitigating these risks. URBAN SHIELD products provide key insights for businesses.
 """)
+
+st.header("How heatproof is a location?")
 # Constants
 total_points = 61
 lat = 49.872833  # Input latitude
@@ -96,62 +98,64 @@ fig.update_layout(
 # Display the choropleth map in the Streamlit app
 st.plotly_chart(fig)
 
+# Hard-coded data for different cities
+data = {
+    "City": ["Darmstadt", "Mainz", "Arheilgen", "Griesheim", "Frankfurt"],
+    "Internal Heat Risk": [7, 6, 5, 8, 9],
+    "Internal Flood Risk": [5, 3, 4, 7, 2],
+    "Internal Heavy Rain Risk": [6, 4, 5, 6, 3],
+    "Internal Storm Risk": [4, 5, 7, 3, 6],
+    "Internal Fire Risk": [2, 3, 4, 5, 6],
+    "External Heat Risk": [6, 5, 4, 7, 8],
+    "External Flood Risk": [4, 2, 3, 6, 1],
+    "External Heavy Rain Risk": [5, 3, 4, 5, 2],
+    "External Storm Risk": [3, 4, 6, 2, 5],
+    "External Fire Risk": [1, 2, 3, 4, 5],
+}
 
-# # Create choropleth map
-# fig = go.Figure(
-#     go.Choroplethmap(
-#     gdf_loaded,
-#     geojson=gdf_loaded.geometry,
-#     locations=gdf_loaded.index,
-#     color='Temperature',
-#     color_continuous_scale="Viridis",
-#     opacity=0.3,
-#     hover_name=hover_text,
-#     hover_data={'Temperature': False},
-#     center={"lat": lat, "lon": lon}
-# )
+    
+# Create a DataFrame
+df = pd.DataFrame(data)
 
-# # Update layout for color axis
-# fig_map.update_layout(
-#     coloraxis_colorbar=dict(
-#         title="Heat Risk",
-#         tickmode="array",
-#         tickvals=[14650, 14500, 14380],
-#         ticktext=["High", "Medium", "Low"],
-#     ),
-#     margin={"r":0, "t":0, "l":0, "b":0},
-#     title="Choropleth Map of Temperature Risk",
-#     height=600  # Set a specific height for the map
-# )
-# fig_map.show()
-# Display the choropleth map in the Streamlit app
-# st.plotly_chart(fig_map)
+
 
 # Create DataFrames with random data for internal and external scenarios
-np.random.seed(42)  # For reproducible results
-df_internal = pd.DataFrame({
-    'category': ['heat risk', 'flood risk', 'heavy rain risk', 'storm risk', 'fire risk', 'heat risk'],
-    'value': [7, 5, 6, 7, 3, 7]
-})
+# np.random.seed(42)  # For reproducible results
+# df_internal = pd.DataFrame({
+#     'category': ['heat risk', 'flood risk', 'heavy rain risk', 'storm risk', 'fire risk', 'heat risk'],
+#     'value': [7, 5, 6, 7, 3, 7]
+# })
 
-df_external = pd.DataFrame({
-    'category': ['heat risk', 'flood risk', 'heavy rain risk', 'storm risk', 'fire risk', 'heat risk'],
-    'value': [6, 4, 5, 6, 2, 6]
-})
+# df_external = pd.DataFrame({
+#     'category': ['heat risk', 'flood risk', 'heavy rain risk', 'storm risk', 'fire risk', 'heat risk'],
+#     'value': [6, 4, 5, 6, 2, 6]
+# })
 
 # Title of the app
 st.title("Environmental Risk Assessment - Internal vs External")
 
-# # Sidebar sliders for risk adjustment
-# st.sidebar.header("Adjust Risk Levels")
-# risk_adjustment_internal = st.sidebar.slider("Internal Risk Adjustment", -3, 3, 0, 1)
-# risk_adjustment_external = st.sidebar.slider("External Risk Adjustment", -3, 3, 0, 1)
 
-# # Adjust values based on sidebar input
-# df_internal['value'] += risk_adjustment_internal
-# df_external['value'] += risk_adjustment_external
+# Dropdown for selecting a city
+selected_city = st.selectbox("Select a city:", df["City"])
 
-# Function to create a polar plot with color-coding for risk levels
+# Filter the DataFrame based on the selected city
+filtered_data = df[df["City"] == selected_city]
+
+# Prepare data for internal and external polar plots
+polar_data_internal = {
+    "category": ["Heat Risk", "Flood Risk", "Heavy Rain Risk", "Storm Risk", "Fire Risk"],
+    "value": filtered_data.iloc[0, 1:6].values  # Getting values for internal risks
+}
+
+polar_data_external = {
+    "category": ["GHG emmission", "Hazard Risk", "Fire Risk", "Noise Risk", "Water Risk"],
+    "value": filtered_data.iloc[0, 6:11].values  # Getting values for external risks
+}
+
+polar_df_internal = pd.DataFrame(polar_data_internal)
+polar_df_external = pd.DataFrame(polar_data_external)
+
+# Function to create a polar plot
 def create_polar_plot(df, title, color):
     fig = go.Figure(go.Scatterpolar(
         r=df['value'],
@@ -168,7 +172,6 @@ def create_polar_plot(df, title, color):
         showlegend=False,
         height=400  # Set a specific height for the polar plots
     )
-
     return fig
 
 # Function to determine color based on risk level
@@ -180,24 +183,30 @@ def get_color(value):
     else:
         return 'green'  # Low risk
 
-# Apply color based on the maximum risk in the dataset
-internal_color = get_color(df_internal['value'].max())
-external_color = get_color(df_external['value'].max())
+# Apply color based on the maximum risk in the dataset for internal and external risks
+internal_max_risk = polar_df_internal['value'].max()
+external_max_risk = polar_df_external['value'].max()
+polar_color_internal = get_color(internal_max_risk)
+polar_color_external = get_color(external_max_risk)
 
-# Create two polar plots
-fig_internal = create_polar_plot(df_internal, "Internal Risks with Adjustments", internal_color)
-fig_external = create_polar_plot(df_external, "External Risks with Adjustments", external_color)
+# Create the polar plots for the selected city's risks
+polar_fig_internal = create_polar_plot(polar_df_internal, f"Internal Environmental Risks for {selected_city}", polar_color_internal)
+polar_fig_external = create_polar_plot(polar_df_external, f"External Environmental Risks for {selected_city}", polar_color_external)
 
 # Create columns for polar plots to display them side by side
 col1, col2 = st.columns(2)
 
 # Display the polar plots in the Streamlit app
 with col1:
-    st.plotly_chart(fig_internal)
+    st.plotly_chart(polar_fig_internal)
 
 with col2:
-    st.plotly_chart(fig_external)
+    st.plotly_chart(polar_fig_external)
 
+st.markdown(
+    """**🟥**: High Risk **🟨**: Medium Risk**🟩**: Low Risk
+    """
+)
 
 st.header("The one side for businesses to mitigate climate risks: CLIMATAI")
 st.write("""
