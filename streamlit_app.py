@@ -5,7 +5,15 @@ import geopandas as gpd
 import pandas as pd
 import numpy as np
 
-st.title("Urban Sheild 🛡️ - Shielding the economy of tomorrow")
+st.markdown(
+    """
+    <div style="text-align: center;">
+        <h1>Urban Shield 🛡️</h1>
+        <h4>Shielding the economy of tomorrow</h4>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 st.header("Climate is changing the world and will change your business. Are you prepared?")
 st.write("""
@@ -198,5 +206,12 @@ remain competitive in our changing world.
 
 st.write("""
 ---
+""")
+
+# Add your logo
+logo_path = "logo.png"  # Replace with the path to your logo image
+st.image(logo_path, width=200)
+
+st.write("""
 Made with Love from Inga, Leonard, Silvio, Anirudha and Paul in a night with very little sleep.
 """)
