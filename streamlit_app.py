@@ -185,3 +185,18 @@ with col1:
 
 with col2:
     st.plotly_chart(fig_external)
+
+
+st.header("The one side for businesses to mitigate climate risks: CLIMATAI")
+st.write("""
+CLIMATAI combines data from multiple sources to provide predictive insights about upcoming climate 
+changes and their potential impacts. By incorporating data about specific industries and businesses, we can help 
+economic leaders make informed, climate-proof decisions. We believe that making a business climate-resilient is 
+making it future-proof. By preparing for the changes ahead, businesses can ensure their operations thrive and 
+remain competitive in our changing world.
+""")
+
+st.write("""
+---
+Made with Love from Inga, Leonard, Silvio, Anirudha and Paul in a night with very little sleep.
+""")
