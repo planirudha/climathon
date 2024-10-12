@@ -62,7 +62,11 @@ fig = go.Figure(
             [0.5, 'rgba(253, 231, 36, 0.3)'],  # Yellow with 60% opacity
             [1, 'rgba(253, 0, 0, 0.3)']    # Red with 60% opacity
         ],
-        colorbar=dict(title="Temperature"),
+        colorbar=dict(
+            title="Heat Risk",
+            tickvals=[14380, 14500, 14650],
+            ticktext=["Low", "Medium", "High"]  # Customize labels as needed
+        ),
         hovertemplate=hover_text,
     )
 )
