@@ -5,7 +5,7 @@ import geopandas as gpd
 import pandas as pd
 import numpy as np
 
-st.title("Urben Sheild 🛡️ - Shielding the economy of tomorrow")
+st.title("Urban Sheild 🛡️ - Shielding the economy of tomorrow")
 
 st.header("Climate is changing the world and will change your business. Are you prepared?")
 st.write("""
