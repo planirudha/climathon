@@ -42,32 +42,76 @@ def create_hover_label(value):
 
 # Create hover text for temperatures
 hover_text = [create_hover_label(val) for val in temperatures_loaded]
-# Create choropleth map
-fig_map = px.choropleth_map(
-    gdf_loaded,
-    geojson=gdf_loaded.geometry,
-    locations=gdf_loaded.index,
-    color='Temperature',
-    color_continuous_scale="Viridis",
-    opacity=0.3,
-    hover_name=hover_text,
-    hover_data={'Temperature': False},
-    center={"lat": lat, "lon": lon}
+
+# Create a choropleth map using go.Figure and Choroplethmapbox
+fig = go.Figure(
+    go.Choroplethmapbox(
+        geojson=gdf_loaded.geometry.__geo_interface__,  # Use __geo_interface__ for GeoJSON
+        locations=gdf_loaded.index,
+        z=gdf_loaded['Temperature'],  # Use 'z' instead of 'color'
+        colorscale=[
+            [0, 'rgba(68, 1, 84, 0.3)'],   # Dark purple with 60% opacity
+            [0.5, 'rgba(253, 231, 36, 0.3)'],  # Yellow with 60% opacity
+            [1, 'rgba(253, 0, 0, 0.3)']    # Red with 60% opacity
+        ],
+        colorbar=dict(title="Temperature"),
+        hovertemplate=hover_text,
+    )
 )
 
-# Update layout for color axis
-fig_map.update_layout(
+# Update layout with Mapbox settings
+fig.update_layout(
+    mapbox_style="open-street-map",
+    mapbox_zoom=6.6,
+    mapbox_center={"lat": lat, "lon": lon},
+    width=800,
+    height=600,
+    margin={"r": 0, "t": 0, "l": 0, "b": 0},
     coloraxis_colorbar=dict(
         title="Heat Risk",
         tickmode="array",
         tickvals=[14650, 14500, 14380],
-        ticktext=["High", "Medium", "Low"],
-    ),
-    margin={"r":0, "t":0, "l":0, "b":0},
-    title="Choropleth Map of Temperature Risk",
-    height=600  # Set a specific height for the map
+        ticktext=[
+            "High",
+            "Medium",
+            "Low",
+        ],
+    )
+
 )
-fig_map.show()
+
+
+# Display the choropleth map in the Streamlit app
+st.plotly_chart(fig)
+
+
+# # Create choropleth map
+# fig = go.Figure(
+#     go.Choroplethmap(
+#     gdf_loaded,
+#     geojson=gdf_loaded.geometry,
+#     locations=gdf_loaded.index,
+#     color='Temperature',
+#     color_continuous_scale="Viridis",
+#     opacity=0.3,
+#     hover_name=hover_text,
+#     hover_data={'Temperature': False},
+#     center={"lat": lat, "lon": lon}
+# )
+
+# # Update layout for color axis
+# fig_map.update_layout(
+#     coloraxis_colorbar=dict(
+#         title="Heat Risk",
+#         tickmode="array",
+#         tickvals=[14650, 14500, 14380],
+#         ticktext=["High", "Medium", "Low"],
+#     ),
+#     margin={"r":0, "t":0, "l":0, "b":0},
+#     title="Choropleth Map of Temperature Risk",
+#     height=600  # Set a specific height for the map
+# )
+# fig_map.show()
 # Display the choropleth map in the Streamlit app
 # st.plotly_chart(fig_map)
 
